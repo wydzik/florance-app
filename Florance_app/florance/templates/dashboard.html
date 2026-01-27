@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Twoje wydarzenia</h2>
+
+<!-- 🔀 Zakładki -->
+<ul class="nav nav-tabs mb-3" role="tablist">
+  <li class="nav-item">
+    <button class="nav-link active"
+            data-bs-toggle="tab"
+            data-bs-target="#upcoming"
+            type="button">
+      Nadchodzące
+    </button>
+  </li>
+  <li class="nav-item">
+    <button class="nav-link"
+            data-bs-toggle="tab"
+            data-bs-target="#archive"
+            type="button">
+      Archiwum
+    </button>
+  </li>
+</ul>
+
+<div class="tab-content">
+
+  <!-- 🔮 NADCHODZĄCE -->
+  <div class="tab-pane fade show active" id="upcoming">
+    {% if upcoming_months %}
+      {% for month in upcoming_months %}
+        <h4 class="mt-4 border-bottom pb-2">{{ month.label }}</h4>
+
+        {% for e in month.events %}
+          {% include "dashboard_event_card.html" %}
+        {% endfor %}
+      {% endfor %}
+    {% else %}
+      <p class="text-muted">Brak nadchodzących wydarzeń.</p>
+    {% endif %}
+  </div>
+
+  <!-- 🗃️ ARCHIWUM -->
+  <div class="tab-pane fade" id="archive">
+    {% if archive_months %}
+      {% for month in archive_months %}
+        <h4 class="mt-4 border-bottom pb-2">{{ month.label }}</h4>
+
+        {% for e in month.events %}
+          {% include "dashboard_event_card.html" %}
+        {% endfor %}
+      {% endfor %}
+    {% else %}
+      <p class="text-muted">Brak wydarzeń w archiwum.</p>
+    {% endif %}
+  </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Profil florysty</h2>
+
+<div class="card mt-3">
+  <div class="card-body">
+
+    <h4>{{ florysta.imie }} {{ florysta.nazwisko }}</h4>
+
+    <p>
+      <strong>Lokalizacja:</strong>
+      {{ florysta.lokalizacja_miasto }},
+      {{ florysta.lokalizacja_wojewodztwo }},
+      {{ florysta.lokalizacja_kraj }}
+    </p>
+
+    <hr>
+
+    <h5>Informacje</h5>
+    <ul class="list-unstyled">
+      <li>🧑‍🎨 Układa kwiaty: {{ florysta.czy_uklada_kwiaty|yesno:"Tak,Nie" }}</li>
+      <li>💪 Może dźwigać: {{ florysta.czy_moze_dzwigac|yesno:"Tak,Nie" }}</li>
+      <li>🪜 Praca na wysokości: {{ florysta.czy_pracuje_na_wysokosci|yesno:"Tak,Nie" }}</li>
+      <li>🚗 Ma auto: {{ florysta.czy_ma_auto|yesno:"Tak,Nie" }}</li>
+      <li>🪪 Prawo jazdy B: {{ florysta.czy_prawo_jazdy_b|yesno:"Tak,Nie" }}</li>
+      <li>🪪 Prawo jazdy C: {{ florysta.czy_prawo_jazdy_c|yesno:"Tak,Nie" }}</li>
+    </ul>
+
+    {% if florysta.czy_pracownia %}
+      <hr>
+      <p>
+        <strong>Pracownia:</strong>
+        {{ florysta.pracownie.first.nazwa }}
+      </p>
+    {% endif %}
+
+    <a href="javascript:history.back()" class="btn btn-secondary mt-3">
+      ← Wróć
+    </a>
+
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Dashboard realizacji</h2>
+
+<form method="get" class="mb-3">
+    <label for="pracownia">Filtruj po pracowni:</label>
+    <select name="pracownia" id="pracownia" class="form-select w-auto d-inline-block">
+        <option value="">Wszystkie pracownie</option>
+        {% for p in pracownie %}
+            <option value="{{ p.id }}" {% if selected_pracownia == p.id|stringformat:"s" %}selected{% endif %}>
+                {{ p.nazwa }}
+            </option>
+        {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-primary">Filtruj</button>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Event</th>
+            <th>Pracownia</th>
+            <th>Miejsce</th>
+            <th>Data rozpoczęcia</th>
+            <th>Data zakończenia</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in realizacje %}
+        <tr>
+            <td>{{ r.nazwa_eventu }}</td>
+            <td>{{ r.pracownia.nazwa }}</td>
+            <td>{{ r.miejsce }}</td>
+            <td>{{ r.data_rozpoczecia|date:"d-m-Y H:i" }}</td>
+            <td>{{ r.data_zakończenia|date:"d-m-Y H:i" }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5">Brak realizacji</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

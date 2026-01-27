@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Twoje zaproszenia do realizacji</h2>
+
+{% for s in zaproszenia %}
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5>{{ s.realizacja.nazwa_eventu }}</h5>
+      <p>
+        <strong>Pracownia:</strong> {{ s.realizacja.pracownia.nazwa }}<br>
+        <strong>Data:</strong> {{ s.data_pracy|date:"d.m.Y" }}<br>
+        <strong>Stawka:</strong> {{ s.stawka }} {{ s.stawka_dzienna_czy_godzinowa }}
+      </p>
+
+      <form method="post" action="{% url 'odpowiedz_na_zaproszenie' s.id %}">
+        {% csrf_token %}
+        <button name="decyzja" value="accept" class="btn btn-success">
+          Akceptuj
+        </button>
+        <button name="decyzja" value="reject" class="btn btn-outline-danger">
+          Odrzuć
+        </button>
+      </form>
+    </div>
+  </div>
+{% empty %}
+  <p>Nie masz aktualnie zaproszeń.</p>
+{% endfor %}
+
+{% endblock %}

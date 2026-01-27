@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3>Czy na pewno chcesz usunąć realizację "{{ realizacja.nazwa_eventu }}"?</h3>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Usuń</button>
+    <a href="{% url 'index' %}" class="btn btn-secondary">Anuluj</a>
+</form>
+{% endblock %}

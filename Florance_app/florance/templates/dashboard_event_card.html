@@ -1,0 +1,75 @@
+<div class="card mb-2">
+  <div class="card-body">
+
+    <h5 class="mb-1">
+      <a href="{{ e.realizacja_url }}" class="text-decoration-none">
+        {{ e.realizacja.nazwa_eventu }}
+      </a>
+    </h5>
+
+    <span class="text-muted">
+      {{ e.date|date:"d.m.Y H:i" }}
+    </span>
+
+    {% if e.opis %}
+      <p class="mb-1 text-muted">
+        {{ e.opis|truncatechars:120 }}
+      </p>
+    {% endif %}
+
+    <!-- TU ZOSTAJE TWÓJ BLOK BADGE / AKCJI -->
+    <!-- dokładnie ten sam co wcześniej -->
+            <!-- Akcje / statusy -->
+        <div class="mt-2">
+
+          {% if e.type == "owner" %}
+            <span class="badge bg-primary">Twoja realizacja</span>
+            <a href="{% url 'realizacja_detail' e.realizacja.id %}"
+               class="btn btn-sm btn-outline-primary ms-2">
+              Zarządzaj
+            </a>
+
+          {% elif e.type == "invite" %}
+            {% if e.status == "oczekuje" %}
+              <span class="badge bg-warning">Zaproszenie</span>
+              <a href="{% url 'accept_invite' e.stanowisko.id %}"
+                 class="btn btn-sm btn-success ms-2">
+                Akceptuj
+              </a>
+              <a href="{% url 'reject_invite' e.stanowisko.id %}"
+                 class="btn btn-sm btn-danger">
+                Odrzuć
+              </a>
+
+            {% elif e.status == "zaakceptowane" %}
+              <span class="badge bg-success">Zaproszenie zaakceptowane</span>
+
+            {% else %}
+              <span class="badge bg-secondary">Zaproszenie odrzucone</span>
+            {% endif %}
+
+          {% elif e.type == "application" %}
+            {% if e.status == "oczekuje" %}
+              <span class="badge bg-warning">Aplikacja wysłana</span>
+
+              {% if e.kandydatura_id %}
+                <a href="{% url 'withdraw_application' e.kandydatura_id %}"
+                   class="btn btn-sm btn-outline-danger ms-2">
+                  Wycofaj
+                </a>
+              {% endif %}
+
+            {% elif e.status == "wybrany" %}
+              <span class="badge bg-success">Aplikacja zaakceptowana</span>
+
+            {% else %}
+              <span class="badge bg-danger">Aplikacja odrzucona</span>
+            {% endif %}
+          {% endif %}
+
+        </div>
+
+
+
+  </div>
+</div>

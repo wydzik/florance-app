@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="mb-4">Moje aplikacje</h2>
+
+<table class="table align-middle">
+  <thead>
+    <tr>
+      <th>Event</th>
+      <th>Stanowisko</th>
+      <th>Pracownia</th>
+      <th>Status</th>
+      <th>Akcje</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for a in aplikacje %}
+      <tr>
+        <td>{{ a.stanowisko.realizacja.nazwa_eventu }}</td>
+        <td>{{ a.stanowisko }}</td>
+        <td>{{ a.stanowisko.realizacja.pracownia.nazwa }}</td>
+        <td>
+          {% if a.status == "wybrany" %}
+            <span class="badge bg-success">Wybrany</span>
+          {% elif a.status == "odrzucony" %}
+            <span class="badge bg-danger">Odrzucony</span>
+          {% else %}
+            <span class="badge bg-warning text-dark">Oczekuje</span>
+          {% endif %}
+        </td>
+        <td>
+          <a href="{% url 'realizacja_detail' a.stanowisko.realizacja.id %}"
+             class="btn btn-sm btn-outline-primary">
+            Zobacz realizację
+          </a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr>
+        <td colspan="5" class="text-center text-muted">
+          Nie aplikowałeś jeszcze na żadne stanowisko
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

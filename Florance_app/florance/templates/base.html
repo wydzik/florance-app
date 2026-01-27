@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>FLORANCE</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'index' %}{% endif %}">FLORANCE</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+{% if user.is_authenticated %}
+<li class="nav-item dropdown">
+  <a class="nav-link dropdown-toggle"
+     href="#"
+     role="button"
+     data-bs-toggle="dropdown">
+
+    🔔
+    {% if unread_notifications_count %}
+      <span class="badge bg-danger">
+        {{ unread_notifications_count }}
+      </span>
+    {% endif %}
+  </a>
+
+  <ul class="dropdown-menu dropdown-menu-end">
+    {% for p in user.powiadomienia.all|slice:":5" %}
+      <li>
+        <a class="dropdown-item {% if not p.is_read %}fw-bold{% endif %}"
+           href="{% url 'mark_notification_read' p.id %}">
+          {{ p.tresc }}<br>
+          <small class="text-muted">
+            {{ p.created_at|date:"d.m H:i" }}
+          </small>
+        </a>
+      </li>
+    {% empty %}
+      <li class="dropdown-item text-muted">
+        Brak powiadomień
+      </li>
+    {% endfor %}
+  </ul>
+</li>
+{% endif %}
+
+                    {% if user.is_authenticated %}
+                        {% with florysta=user.florysta %}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'znajdz_zlecenie' %}">Znajdź zlecenie</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'moje_aplikacje' %}">Moje aplikacje</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'twoje_zaproszenia' %}">Zaproszenia</a></li>
+                            {% if florysta.pracownie.count > 0 %}
+                                <li class="nav-item"><a class="nav-link" href="{% url 'edit_pracownia' florysta.pracownie.first.id %}">{{ florysta.pracownie.first.nazwa }}</a></li>
+                            {% else %}
+                                <li class="nav-item"><a class="nav-link" href="{% url 'create_pracownia' %}">Dodaj pracownię</a></li>
+                            {% endif %}
+                        {% endwith %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'edit_profile' %}">Mój profil</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Wyloguj się</a></li>
+                    {% else %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Rejestracja</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Logowanie</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        {% block content %}
+        <!-- tutaj podmieniają się widoki -->
+        {% endblock %}
+    </div>
+
+    <footer class="text-center mt-4 mb-2 text-muted">
+        &copy; 2025 Florance
+    </footer>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</html>

@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <h2>Kandydaci – {{ realizacja.nazwa_eventu }}</h2>
+
+    <table class="table align-middle">
+      <thead>
+        <tr>
+          <th>Florysta</th>
+          <th>Stanowisko</th>
+          <th>Wiadomość</th>
+          <th>Status</th>
+          <th>Akcje</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for kandydat in kandydaci %}
+          <tr>
+<td>
+  <strong>
+    <a href="{% url 'florysta_detail' kandydat.florysta.id %}"
+       class="text-decoration-none">
+      {{ kandydat.florysta.imie }} {{ kandydat.florysta.nazwisko }}
+    </a>
+  </strong><br>
+  <small class="text-muted">{{ kandydat.florysta.user.username }}</small>
+</td>
+
+
+
+
+            <td>{{ kandydat.stanowisko }}</td>
+
+            <td style="max-width: 300px;">
+              {% if kandydat.wiadomosc %}
+                <div class="border rounded p-2 bg-light">
+                  {{ kandydat.wiadomosc|linebreaksbr }}
+                </div>
+              {% else %}
+                <span class="text-muted">Brak wiadomości</span>
+              {% endif %}
+            </td>
+
+            <td>
+              {% if kandydat.status == "wybrany" %}
+                <span class="badge bg-success">Wybrany</span>
+              {% elif kandydat.status == "odrzucony" %}
+                <span class="badge bg-danger">Odrzucony</span>
+              {% else %}
+                <span class="badge bg-secondary">Oczekuje</span>
+              {% endif %}
+            </td>
+                        <td>
+  {% if kandydat.status == "oczekuje" %}
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="kandydat_id" value="{{ kandydat.id }}">
+      <button class="btn btn-sm btn-primary">Wybierz</button>
+    </form>
+  {% endif %}
+</td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="5">Brak kandydatów</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <a href="{% url 'realizacja_detail' realizacja.id %}" class="btn btn-secondary">Powrót</a>
+  </div>
+</div>
+{% endblock %}

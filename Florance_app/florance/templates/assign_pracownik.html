@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block content %}
+<h3 xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">Przypisz osobę do stanowiska</h3>
+<p><strong>Realizacja:</strong> {{ realizacja.nazwa_eventu }}</p>
+
+{% if stanowisko.przypisany_florysta or stanowisko.przypisane_imie %}
+  <div class="alert alert-info">
+    Aktualnie przypisany:
+    <strong>
+      {% if stanowisko.przypisany_florysta %}
+        {{ stanowisko.przypisany_florysta.imie }} {{ stanowisko.przypisany_florysta.nazwisko }}
+      {% else %}
+        {{ stanowisko.przypisane_imie }} {{ stanowisko.przypisane_nazwisko }}
+      {% endif %}
+    </strong>
+    <br>
+    Zapisanie formularza nadpisze to przypisanie.
+  </div>
+{% endif %}
+
+
+<form method="post">
+  {% csrf_token %}
+
+  <fieldset class="mb-3">
+    <legend>Kandydat</legend>
+    {{ form.kandydat }}
+  </fieldset>
+
+  <fieldset class="mb-3">
+    <legend>Florysta z systemu</legend>
+    {{ form.florysta }}
+  </fieldset>
+
+  <fieldset class="mb-3">
+    <legend>Osoba spoza systemu</legend>
+    Imię: {{ form.imie }}
+    </br>
+    Nazwisko: {{ form.nazwisko }}
+    </br>
+    Nr Telefonu (opcjonalnie){{ form.telefon }}
+  </fieldset>
+
+  <button class="btn btn-success">Przypisz</button>
+  <a href="{% url 'realizacja_detail' realizacja.id %}" class="btn btn-secondary">
+    Anuluj
+  </a>
+</form>
+{% endblock %}

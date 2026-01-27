@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="mb-4">Dostępne zlecenia</h2>
+
+{% if realizacje %}
+  <div class="list-group">
+    {% for r in realizacje %}
+      <a href="{% url 'realizacja_detail' r.id %}" class="list-group-item list-group-item-action">
+        <h5 class="mb-1">{{ r.nazwa_eventu }}</h5>
+        <small>
+          {{ r.miejsce }} | {{ r.data_rozpoczecia|date:"d.m.Y" }} - {{ r.data_zakonczenia|date:"d.m.Y" }}
+        </small>
+        <p class="mb-1">{{ r.opis|truncatechars:100 }}</p>
+      </a>
+    {% endfor %}
+  </div>
+{% else %}
+  <p>Brak dostępnych zleceń.</p>
+{% endif %}
+{% endblock %}

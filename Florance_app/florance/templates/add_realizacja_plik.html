@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Dodaj plik do realizacji: {{ realizacja.nazwa_eventu }}</h2>
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+
+  {{ form.as_p }}
+
+  <button type="submit" class="btn btn-success">
+    Dodaj plik
+  </button>
+
+  <a href="{% url 'realizacja_detail' realizacja.id %}"
+     class="btn btn-secondary">
+    Anuluj
+  </a>
+</form>
+{% endblock %}

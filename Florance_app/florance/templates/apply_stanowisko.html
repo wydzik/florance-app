@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <h3>Aplikuj na stanowisko w realizacji: {{ stanowisko.realizacja.nazwa_eventu }}</h3>
+    <p><strong>Stanowisko:</strong> {{ stanowisko }}</p>
+
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-success">Wyślij aplikację</button>
+      <a href="{% url 'realizacja_detail' stanowisko.realizacja.pk %}" class="btn btn-secondary">Powrót</a>
+    </form>
+  </div>
+</div>
+{% endblock %}
