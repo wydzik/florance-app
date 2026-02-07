@@ -3,13 +3,6 @@ from .models import Florysta, Pracownia, Realizacja, Pracownicy, Kandydat, Statu
                     RealizacjaPlik, Powiadomienie
 
 admin.site.register(Florysta)
-
-
-@admin.register(Florysta)
-class FlorystaAdmin(admin.ModelAdmin):
-    list_display = ("id", "user", "avatar")
-
-
 admin.site.register(Pracownia)
 admin.site.register(Realizacja)
 admin.site.register(Pracownicy)
