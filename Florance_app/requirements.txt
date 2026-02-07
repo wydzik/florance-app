@@ -6,4 +6,6 @@ whitenoise
 django-crispy-forms
 crispy-bootstrap5
 Pillow>=10.0.0
+django-storages
+boto3
 
