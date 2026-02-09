@@ -23,16 +23,21 @@
   <div class="row">
     <div class="col-md-6 mb-3">
   <label class="form-label">Hasło</label>
-  {{ form.password }}
 
-  {% if form.password.help_text %}
-    <div class="form-text">
-      {{ form.password.help_text|safe }}
-    </div>
-  {% endif %}
+  <div class="input-group">
+    {{ form.password }}
+    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+      👁
+    </button>
+  </div>
+
+  <div id="passwordHelp" class="form-text">
+    Hasło musi spełniać wymagania
+  </div>
 
   {{ form.password.errors }}
 </div>
+
 
 
     <div class="col-md-6 mb-3">
@@ -99,5 +104,46 @@
     <a href="{% url 'login' %}" class="btn btn-secondary">Mam już konto</a>
   </div>
 </form>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const passwordInput = document.getElementById("id_password");
+  const help = document.getElementById("passwordHelp");
+
+  const rules = [
+    { regex: /.{8,}/, text: "Minimum 8 znaków" },
+    { regex: /[A-Z]/, text: "Co najmniej jedna wielka litera" },
+    { regex: /[a-z]/, text: "Co najmniej jedna mała litera" },
+    { regex: /\d/, text: "Co najmniej jedna cyfra" },
+  ];
+
+  function updateHelp() {
+    const value = passwordInput.value;
+
+    help.innerHTML = rules.map(rule => {
+      const ok = rule.regex.test(value);
+      return `<div class="${ok ? 'text-success' : 'text-muted'}">
+        ${ok ? '✔️' : '•'} ${rule.text}
+      </div>`;
+    }).join("");
+  }
+
+  passwordInput.addEventListener("input", updateHelp);
+});
+
+const toggleBtn = document.getElementById("togglePassword");
+
+toggleBtn.addEventListener("click", function () {
+  if (passwordInput.type === "password") {
+    passwordInput.type = "text";
+    toggleBtn.textContent = "🙈";
+  } else {
+    passwordInput.type = "password";
+    toggleBtn.textContent = "👁";
+  }
+});
+
+</script>
+
 
 {% endblock %}

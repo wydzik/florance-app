@@ -3,6 +3,9 @@ from django.forms import ModelForm
 from .models import Florysta, Umiejetnosci, Pracownia, Realizacja, Pracownicy, Kandydat, RealizacjaPlik, KomentarzStanowiska
 from django.contrib.auth.password_validation import password_validators_help_texts
 from django.utils.safestring import mark_safe
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+
 
 
 # Lista polskich województw
@@ -177,8 +180,17 @@ class FlorystaRegistrationForm(forms.ModelForm):
     def clean(self):
         cleaned = super().clean()
 
-        if cleaned.get("password") != cleaned.get("password2"):
+        password = cleaned.get("password")
+        password2 = cleaned.get("password2")
+
+        if password and password2 and password != password2:
             self.add_error("password2", "Hasła muszą się zgadzać")
+
+        if password:
+            try:
+                validate_password(password)
+            except ValidationError as e:
+                self.add_error("password", e)
 
         if User.objects.filter(username=cleaned.get("username")).exists():
             self.add_error("username", "Taki użytkownik już istnieje")
