@@ -1,7 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h2>Twoje wydarzenia</h2>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="mb-0">Twoje wydarzenia</h2>
+
+  <a href="{% url 'create_event' %}" class="btn btn-primary">
+    ➕ Dodaj wydarzenie
+  </a>
+</div>
 
 <!-- 🔀 Zakładki -->
 <ul class="nav nav-tabs mb-3" role="tablist">
