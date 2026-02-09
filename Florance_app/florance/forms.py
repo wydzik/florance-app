@@ -1,6 +1,9 @@
 from django import forms
 from django.forms import ModelForm
 from .models import Florysta, Umiejetnosci, Pracownia, Realizacja, Pracownicy, Kandydat, RealizacjaPlik, KomentarzStanowiska
+from django.contrib.auth.password_validation import password_validators_help_texts
+from django.utils.safestring import mark_safe
+
 
 # Lista polskich województw
 WOJEWODZTWA = [
@@ -161,6 +164,15 @@ class FlorystaRegistrationForm(forms.ModelForm):
             "czy_uklada_kwiaty", "czy_moze_dzwigac",
             "czy_pracuje_na_wysokosci", "czy_ma_auto"
         ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.password.help_text = mark_safe(
+            "<ul class='mb-0'>" +
+            "".join(f"<li>{text}</li>" for text in password_validators_help_texts()) +
+            "</ul>"
+        )
 
     def clean(self):
         cleaned = super().clean()
