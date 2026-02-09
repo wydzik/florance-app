@@ -168,7 +168,7 @@ class FlorystaRegistrationForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.password.help_text = mark_safe(
+        self.fields["password"].help_text = mark_safe(
             "<ul class='mb-0'>" +
             "".join(f"<li>{text}</li>" for text in password_validators_help_texts()) +
             "</ul>"
