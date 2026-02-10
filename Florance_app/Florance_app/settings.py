@@ -41,7 +41,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "apikey"
 EMAIL_HOST_PASSWORD = env("SENDGRID_API_KEY")
 
-DEFAULT_FROM_EMAIL = "no-reply@florance.app"
+DEFAULT_FROM_EMAIL = "florance.polska@gmail.com"
 
 # Application definition
 
