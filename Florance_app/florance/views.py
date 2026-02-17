@@ -392,9 +392,8 @@ def lista_kandydatow(request, pk):
         with transaction.atomic():
             # przypisanie florysty do stanowiska
             stanowisko.przypisany_florysta = kandydat.florysta
+            stanowisko.status_przypisania = StatusPrzypisania.ZAAKCEPTOWANE
             stanowisko.save()
-
-            # oznacz wybranego
 
             kandydat.status = StatusKandydata.WYBRANY
             kandydat.save()
@@ -778,7 +777,7 @@ def reject_invite(request, pk):
 
     # czyścimy przypisanie
     stanowisko.przypisany_florysta = None
-    stanowisko.status_przypisania = None
+    stanowisko.status_przypisania = StatusPrzypisania.ODRZUCONE
     stanowisko.save()
 
     return redirect("dashboard")
