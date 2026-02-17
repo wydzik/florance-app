@@ -7,6 +7,10 @@
     Edytuj realizację
   </a>
 {% endif %}
+<a href="{% url 'florysta_detail' realizacja.pracownia.owner.id %}">
+    {{ realizacja.pracownia.owner.imie }}
+    {{ realizacja.pracownia.owner.nazwisko }}
+</a>
 
 <p><strong>Miejsce:</strong> {{ realizacja.miejsce }}</p>
 <p><strong>Data:</strong> {{ realizacja.data_rozpoczecia }} – {{ realizacja.data_zakonczenia }}</p>

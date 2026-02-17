@@ -8,6 +8,12 @@
     {% for r in realizacje %}
       <a href="{% url 'realizacja_detail' r.id %}" class="list-group-item list-group-item-action">
         <h5 class="mb-1">{{ r.nazwa_eventu }}</h5>
+        <p class="text-muted mb-1">
+    Organizator:
+    {{ r.pracownia.nazwa }}
+    ({{ r.pracownia.owner.imie }} {{ r.pracownia.owner.nazwisko }})
+</p>
+
         <small>
           {{ r.miejsce }} | {{ r.data_rozpoczecia|date:"d.m.Y" }} - {{ r.data_zakonczenia|date:"d.m.Y" }}
         </small>

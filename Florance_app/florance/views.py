@@ -206,7 +206,13 @@ def edit_pracownia(request, pk):
 
 @login_required
 def realizacja_detail(request, pk):
-    realizacja = get_object_or_404(Realizacja, pk=pk)
+    realizacja = get_object_or_404(
+        Realizacja.objects.select_related(
+            "pracownia",
+            "pracownia__owner"
+        ),
+        pk=pk
+    )
     florysta = get_object_or_404(Florysta, user=request.user)
     is_owner = realizacja.pracownia.owner == florysta
 
@@ -303,7 +309,10 @@ def delete_pracownicy(request, realizacja_id, pk):
 
 @login_required
 def znajdz_zlecenie(request):
-    realizacje = Realizacja.objects.annotate(
+    realizacje = Realizacja.objects.select_related(
+        "pracownia",
+        "pracownia__owner"
+    ).annotate(
         ma_stanowiska=Exists(
             Pracownicy.objects.filter(realizacja=OuterRef('pk'))
         )
