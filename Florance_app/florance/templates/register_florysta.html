@@ -107,6 +107,16 @@
   <div class="form-check">{{ form.czy_prawo_jazdy_c }} Prawo jazdy C</div>
   <div class="form-check">{{ form.czy_ma_auto }} Mam własne auto</div>
 
+  <div class="form-check mt-3">
+  {{ form.accept_privacy }}
+    <label class="form-check-label">
+      Akceptuję <a href="{% url 'privacy_policy' %}" target="_blank"> politykę prywatności</a>
+    </label>
+  </div>
+
+{{ form.accept_privacy.errors }}
+
+
   <div class="mt-4">
     <button class="btn btn-success">Zarejestruj się</button>
     <a href="{% url 'login' %}" class="btn btn-secondary">Mam już konto</a>

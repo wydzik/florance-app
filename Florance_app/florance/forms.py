@@ -156,6 +156,10 @@ class FlorystaRegistrationForm(forms.ModelForm):
     email = forms.EmailField(label="Email", required=True)
     password = forms.CharField(label="Hasło", widget=forms.PasswordInput)
     password2 = forms.CharField(label="Powtórz hasło", widget=forms.PasswordInput)
+    accept_privacy = forms.BooleanField(
+        label="Akceptuję politykę prywatności",
+        required=True
+    )
 
     class Meta:
         model = Florysta

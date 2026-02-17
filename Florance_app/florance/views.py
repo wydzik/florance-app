@@ -924,3 +924,18 @@ def mark_notification_read(request, pk):
     p.is_read = True
     p.save()
     return redirect(p.link or "dashboard")
+
+
+def privacy_policy(request):
+    return render(request, "privacy_policy.html")
+
+
+@login_required
+def delete_account(request):
+    if request.method == "POST":
+        request.user.delete()
+        messages.success(request, "Konto zostało usunięte.")
+        return redirect("index")
+
+    return render(request, "delete_account.html")
+
