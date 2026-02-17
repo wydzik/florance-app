@@ -654,6 +654,9 @@ def dashboard(request):
     # 2️⃣ Zaproszenia / przypisania
     for s in Pracownicy.objects.filter(
             przypisany_florysta=florysta
+    ).exclude(
+        kandydaci__florysta=florysta,
+        kandydaci__status=StatusKandydata.WYBRANY
     ):
         r = s.realizacja
 
