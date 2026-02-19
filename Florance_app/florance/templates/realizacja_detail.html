@@ -110,72 +110,57 @@
       <th>Akcje</th>
     </tr>
   </thead>
-  <tbody>
-    {% for s in stanowiska %}
-    <tr>
-      <td>{{ s.data_pracy|date:"d.m.Y" }}</td>
-      <td>{{ s.czy_wlasny_transport|yesno:"wymagany,nie" }}</td>
-      <td>{{ s.czy_wymagane_dzwiganie|yesno:"tak,nie" }}</td>
-      <td>{{ s.czy_wymagane_ukladanie_kwiatow|yesno:"tak,nie" }}</td>
-      <td>{{ s.czy_wymagane_prawo_jazdy|default:"—" }}</td>
-      <td>{{ s.stawka }} ({{ s.stawka_dzienna_czy_godzinowa }})</td>
-      <td>{{ s.minimalny_czas_pracy }}</td>
-      <td>{{ s.szczegoly|truncatechars:60 }}</td>
+ <tbody>
+{% for s in stanowiska %}
+<tr>
+  <td>{{ s.data_pracy|date:"d.m.Y" }}</td>
+  <td>{{ s.czy_wlasny_transport|yesno:"wymagany,nie" }}</td>
+  <td>{{ s.czy_wymagane_dzwiganie|yesno:"tak,nie" }}</td>
+  <td>{{ s.czy_wymagane_ukladanie_kwiatow|yesno:"tak,nie" }}</td>
+  <td>{{ s.czy_wymagane_prawo_jazdy|default:"—" }}</td>
+  <td>{{ s.stawka }} ({{ s.stawka_dzienna_czy_godzinowa }})</td>
+  <td>{{ s.minimalny_czas_pracy }}</td>
+  <td>{{ s.szczegoly|truncatechars:60 }}</td>
 
-<td>
-  {% if is_owner %}
-  {% if is_owner %}
-{% if s.przypisany_florysta or s.przypisane_imie %}
-  <div class="d-flex flex-column gap-1">
-{% if s.przypisany_florysta %}
-  {% if s.status_przypisania == "oczekuje" %}
-    <span class="badge bg-warning text-dark">
-      Oczekuje na potwierdzenie
-    </span>
-{% if stanowisko.assigned_person_name %}
+  <td>
 
-    {% if stanowisko.przypisany_florysta %}
-        <!-- 🔵 Florysta z systemu -->
-        <a href="{% url 'florysta_detail' stanowisko.przypisany_florysta.id %}"
-           class="fw-semibold text-decoration-none">
-            {{ stanowisko.assigned_person_name }}
-        </a>
+  {% if is_owner %}
+
+    {% if s.assigned_person_name %}
+      <div class="mb-2">
+
+        {% if s.przypisany_florysta %}
+          <a href="{% url 'florysta_detail' s.przypisany_florysta.id %}"
+             class="fw-semibold text-decoration-none">
+            {{ s.assigned_person_name }}
+          </a>
+        {% else %}
+          <a href="tel:{{ s.przypisany_telefon }}"
+             class="fw-semibold text-decoration-none"
+             data-bs-toggle="tooltip"
+             title="Zadzwoń: {{ s.przypisany_telefon }}">
+            {{ s.assigned_person_name }}
+          </a>
+        {% endif %}
+
+      </div>
+
+      <a href="{% url 'assign_pracownik' realizacja.id s.id %}"
+         class="btn btn-sm btn-outline-primary">
+        Zmień przypisanie
+      </a>
 
     {% else %}
-        <!-- 🟢 Osoba spoza systemu -->
-        <span class="fw-semibold"
-              data-bs-toggle="tooltip"
-              title="Telefon: {{ stanowisko.przypisany_telefon }}">
-            <a href="tel:{{ stanowisko.przypisany_telefon }}"
-               class="text-decoration-none">
-                {{ stanowisko.assigned_person_name }}
-            </a>
-        </span>
+
+      <a href="{% url 'assign_pracownik' realizacja.id s.id %}"
+         class="btn btn-sm btn-primary">
+        Przypisz osobę
+      </a>
+
     {% endif %}
 
-{% endif %}
-
-{% elif s.przypisane_imie %}
-  <span class="badge bg-success">
-    Przypisany: {{ s.przypisane_imie }} {{ s.przypisane_nazwisko }}
-  </span>
-{% endif %}
-    <a href="{% url 'assign_pracownik' realizacja.id s.id %}"
-       class="btn btn-sm btn-outline-primary">
-      Zmień przypisanie
-    </a>
-  </div>
-{% else %}
-  <a href="{% url 'assign_pracownik' realizacja.id s.id %}"
-     class="btn btn-sm btn-primary">
-    Przypisz osobę
-  </a>
-{% endif %}
-
-{% endif %}
-
     <a href="{% url 'edit_pracownicy' realizacja.id s.id %}"
-       class="btn btn-sm btn-outline-primary">
+       class="btn btn-sm btn-outline-secondary">
       Edytuj
     </a>
 
@@ -185,123 +170,62 @@
       Usuń
     </button>
 
-
   {% else %}
+
     {% if s.is_filled %}
-  <span class="badge bg-success">
-    Stanowisko obsadzone
-  </span>
+      <span class="badge bg-success">Stanowisko obsadzone</span>
 
-{% elif s.already_applied %}
-  <span class="badge bg-warning text-dark">
-    Już aplikowałeś
-  </span>
+    {% elif s.already_applied %}
+      <span class="badge bg-warning text-dark">
+        Już aplikowałeś
+      </span>
 
-{% else %}
-  <a href="{% url 'apply_stanowisko' s.id %}"
-     class="btn btn-sm btn-success">
-    Aplikuj
-  </a>
-{% endif %}
+    {% else %}
+      <a href="{% url 'apply_stanowisko' s.id %}"
+         class="btn btn-sm btn-success">
+        Aplikuj
+      </a>
+    {% endif %}
 
   {% endif %}
-{% if is_owner %}
+
+  </td>
+</tr>
+
+{% empty %}
 <tr>
   <td colspan="9">
+    Brak zdefiniowanych stanowisk dla tej realizacji.
+  </td>
+</tr>
+{% endfor %}
+</tbody>
 
-    <div class="mt-2 p-3 bg-light rounded">
-<button class="btn btn-sm btn-outline-secondary"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#comments-{{ s.id }}"
-        aria-expanded="false">
-  💬 Komentarze wewnętrzne ({{ s.komentarze.count }})
-</button>
+</table>
 
-<div class="collapse mt-2" id="comments-{{ s.id }}">
-  <div class="p-3 bg-light rounded">
-
-    {% for komentarz in s.komentarze.all %}
-      <div class="border rounded p-2 mt-2 bg-white">
-        <small class="text-muted">
-          {{ komentarz.created_at|date:"d.m.Y H:i" }}
-        </small>
-        <p class="mb-0">
-          {{ komentarz.tresc|linebreaksbr }}
-        </p>
-      </div>
-    {% empty %}
-      <p class="text-muted mt-2">Brak komentarzy.</p>
-    {% endfor %}
-
-    <form method="post"
-          action="{% url 'add_komentarz_stanowiska' s.id %}"
-          class="mt-3">
-      {% csrf_token %}
-      <textarea name="tresc"
-                class="form-control"
-                rows="2"
-                placeholder="Dodaj komentarz..."></textarea>
-
-      <button class="btn btn-sm btn-outline-primary mt-2">
-        Dodaj komentarz
-      </button>
-    </form>
-
-  </div>
-</div>
-
-
-{% endif %}
-
-
-
-      {% for s in stanowiska %}
-<div class="modal fade" id="deleteModal{{ s.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ s.id }}" aria-hidden="true">
+{% if is_owner %}
+{% for s in stanowiska %}
+<div class="modal fade" id="deleteModal{{ s.id }}" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header bg-danger text-white">
-        <h5 class="modal-title" id="deleteModalLabel{{ s.id }}">Usuń stanowisko</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Zamknij"></button>
-      </div>
-      <div class="modal-body">
-        Czy na pewno chcesz usunąć stanowisko <strong>{{ s.data_pracy|date:"d.m.Y" }}</strong>
-        (stawka: {{ s.stawka }} {{ s.stawka_dzienna_czy_godzinowa }}) w realizacji
-        <strong>{{ realizacja.nazwa_eventu }}</strong>?
-      </div>
-      <div class="modal-footer">
-        <form method="post" action="{% url 'delete_pracownicy' realizacja.id s.id %}">
-          {% csrf_token %}
-          <button type="submit" class="btn btn-danger">Tak, usuń</button>
-        </form>
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
-      </div>
-    </div>
-  </div>
-</div>
-      {% if is_owner %}
-<div class="modal fade" id="deleteModal{{ s.id }}" tabindex="-1"
-     aria-labelledby="deleteModalLabel{{ s.id }}" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header bg-danger text-white">
-        <h5 class="modal-title" id="deleteModalLabel{{ s.id }}">
-          Usuń stanowisko
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <h5 class="modal-title">Usuń stanowisko</h5>
+        <button type="button" class="btn-close"
+                data-bs-dismiss="modal"></button>
       </div>
 
       <div class="modal-body">
         Czy na pewno chcesz usunąć stanowisko z dnia
-        <strong>{{ s.data_pracy|date:"d.m.Y" }}</strong>
-        ({{ s.stawka }} {{ s.stawka_dzienna_czy_godzinowa }})?
+        <strong>{{ s.data_pracy|date:"d.m.Y" }}</strong>?
       </div>
 
       <div class="modal-footer">
         <form method="post"
               action="{% url 'delete_pracownicy' realizacja.id s.id %}">
           {% csrf_token %}
-          <button type="submit" class="btn btn-danger">Tak, usuń</button>
+          <button type="submit" class="btn btn-danger">
+            Tak, usuń
+          </button>
         </form>
         <button type="button" class="btn btn-secondary"
                 data-bs-dismiss="modal">
@@ -311,17 +235,8 @@
     </div>
   </div>
 </div>
+{% endfor %}
 {% endif %}
 
-{% endfor %}
-
-
-
-    </tr>
-    {% empty %}
-    <tr><td colspan="9">Brak zdefiniowanych stanowisk dla tej realizacji.</td></tr>
-    {% endfor %}
-  </tbody>
-</table>
 
 {% endblock %}
