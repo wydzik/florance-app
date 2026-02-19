@@ -69,6 +69,9 @@ class Florysta(models.Model):
     czy_pracuje_na_wysokosci = models.BooleanField(default=False)
     czy_ma_auto = models.BooleanField(default=False)
 
+    def __str__(self):
+        return f"{self.imie} {self.nazwisko} ({self.lokalizacja_miasto})"
+
 
 # Definicja modelu Pracownia
 class Pracownia(models.Model):
@@ -174,6 +177,18 @@ class Pracownicy(models.Model):
 
     def __str__(self):
         return f"Stanowisko – {self.realizacja.nazwa_eventu}"
+
+    @property
+    def assigned_person_name(self):
+        if self.przypisany_florysta:
+            return f"{self.przypisany_florysta.imie} {self.przypisany_florysta.nazwisko}"
+        elif self.przypisane_imie and self.przypisane_nazwisko:
+            return f"{self.przypisane_imie} {self.przypisane_nazwisko}"
+        return None
+
+    @property
+    def is_external(self):
+        return self.przypisany_florysta is None and self.przypisane_imie
 
 
 class StatusKandydata(models.TextChoices):

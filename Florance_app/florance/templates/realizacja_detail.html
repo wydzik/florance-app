@@ -132,11 +132,29 @@
     <span class="badge bg-warning text-dark">
       Oczekuje na potwierdzenie
     </span>
-  {% elif s.status_przypisania == "zaakceptowane" %}
-    <span class="badge bg-success">
-      Zaakceptowane
-    </span>
-  {% endif %}
+{% if stanowisko.assigned_person_name %}
+
+    {% if stanowisko.przypisany_florysta %}
+        <!-- 🔵 Florysta z systemu -->
+        <a href="{% url 'florysta_detail' stanowisko.przypisany_florysta.id %}"
+           class="fw-semibold text-decoration-none">
+            {{ stanowisko.assigned_person_name }}
+        </a>
+
+    {% else %}
+        <!-- 🟢 Osoba spoza systemu -->
+        <span class="fw-semibold"
+              data-bs-toggle="tooltip"
+              title="Telefon: {{ stanowisko.przypisany_telefon }}">
+            <a href="tel:{{ stanowisko.przypisany_telefon }}"
+               class="text-decoration-none">
+                {{ stanowisko.assigned_person_name }}
+            </a>
+        </span>
+    {% endif %}
+
+{% endif %}
+
 {% elif s.przypisane_imie %}
   <span class="badge bg-success">
     Przypisany: {{ s.przypisane_imie }} {{ s.przypisane_nazwisko }}
