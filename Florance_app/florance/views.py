@@ -17,6 +17,8 @@ from django.utils import timezone
 from django.utils.formats import date_format
 from collections import defaultdict
 from .utils.notifications import notify_user
+from django.utils.http import url_has_allowed_host_and_scheme
+
 
 
 def notify(user, tresc, link=None):
@@ -96,6 +98,9 @@ def create_pracownia(request):
 def login_view(request):
     next_url = request.GET.get("next") or request.POST.get("next")
 
+    if not url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}):
+        next_url = None
+
     if request.method == "POST":
         form = LoginForm(request.POST)
 
@@ -113,15 +118,10 @@ def login_view(request):
     else:
         form = LoginForm()
 
-    return render(
-        request,
-        "login.html",
-        {
-            "form": form,
-            "next": next_url
-        }
-    )
-
+    return render(request, "login.html", {
+        "form": form,
+        "next": next_url
+    })
 
 def logout_view(request):
     logout(request)
