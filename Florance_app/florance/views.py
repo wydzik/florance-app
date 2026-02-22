@@ -98,7 +98,8 @@ def create_pracownia(request):
 def login_view(request):
     next_url = request.GET.get("next") or request.POST.get("next")
 
-    if not url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}):
+    # 🔥 usuń string "None"
+    if next_url in [None, "", "None"]:
         next_url = None
 
     if request.method == "POST":
