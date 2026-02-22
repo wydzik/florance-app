@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2 class="mb-4">Jak korzystać z serwisu?</h2>
+
+<div class="accordion" id="instrukcjaAccordion">
+
+  <!-- ================= OWNER ================= -->
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingOwner">
+      <button class="accordion-button" type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapseOwner"
+              aria-expanded="true">
+        🏢 Dla właściciela pracowni
+      </button>
+    </h2>
+    <div id="collapseOwner"
+         class="accordion-collapse collapse show"
+         data-bs-parent="#instrukcjaAccordion">
+      <div class="accordion-body">
+
+        <h5>1️⃣ Utworzenie pracowni</h5>
+        <ul>
+          <li>Wejdź w „Dodaj pracownię”.</li>
+          <li>Podaj nazwę pracowni.</li>
+          <li>Zapisz.</li>
+        </ul>
+
+        <h5 class="mt-3">2️⃣ Utworzenie realizacji (eventu)</h5>
+        <ul>
+          <li>Wejdź w swoją pracownię.</li>
+          <li>Kliknij „Dodaj realizację”.</li>
+          <li>Podaj nazwę wydarzenia, daty, miejsce i opis.</li>
+          <li>Zapisz.</li>
+        </ul>
+
+        <h5 class="mt-3">3️⃣ Dodanie stanowiska pracy</h5>
+        <ul>
+          <li>Wejdź w szczegóły realizacji.</li>
+          <li>Kliknij „Dodaj stanowisko”.</li>
+          <li>Ustaw:
+            <ul>
+              <li>datę pracy,</li>
+              <li>wymagania (transport, dźwiganie itd.),</li>
+              <li>stawkę,</li>
+              <li>opis stanowiska.</li>
+            </ul>
+          </li>
+          <li>Zapisz.</li>
+        </ul>
+
+        <h5 class="mt-3">4️⃣ Zarządzanie kandydatami</h5>
+        <ul>
+          <li>Wejdź w „Zobacz kandydatów”.</li>
+          <li>Sprawdź zgłoszenia.</li>
+          <li>Kliknij „Wybierz”, aby przypisać osobę do stanowiska.</li>
+          <li>Wybrany kandydat zostaje automatycznie przypisany.</li>
+        </ul>
+
+        <h5 class="mt-3">5️⃣ Ręczne przypisanie osoby</h5>
+        <ul>
+          <li>W szczegółach realizacji kliknij „Przypisz osobę”.</li>
+          <li>Możesz:
+            <ul>
+              <li>wybrać kandydata,</li>
+              <li>wybrać florystę z systemu,</li>
+              <li>dodać osobę spoza systemu (z numerem telefonu).</li>
+            </ul>
+          </li>
+          <li>Zapisz zmiany.</li>
+        </ul>
+
+        <h5 class="mt-3">6️⃣ Pliki i notatki</h5>
+        <ul>
+          <li>W szczegółach realizacji możesz dodać pliki (np. PDF, zdjęcia).</li>
+          <li>Możesz też prowadzić prywatne notatki widoczne tylko dla Ciebie.</li>
+        </ul>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= FLORYSTA ================= -->
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingFlorysta">
+      <button class="accordion-button collapsed"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapseFlorysta">
+        🌿 Dla florysty (freelancera)
+      </button>
+    </h2>
+    <div id="collapseFlorysta"
+         class="accordion-collapse collapse"
+         data-bs-parent="#instrukcjaAccordion">
+      <div class="accordion-body">
+
+        <h5>1️⃣ Znalezienie zlecenia</h5>
+        <ul>
+          <li>Wejdź w „Znajdź zlecenie”.</li>
+          <li>Przeglądaj dostępne realizacje.</li>
+          <li>Wejdź w szczegóły wybranego wydarzenia.</li>
+        </ul>
+
+        <h5 class="mt-3">2️⃣ Aplikowanie na stanowisko</h5>
+        <ul>
+          <li>Kliknij „Aplikuj”.</li>
+          <li>Potwierdź zgłoszenie.</li>
+          <li>Twoja aplikacja pojawi się w dashboardzie ze statusem „Oczekuje”.</li>
+        </ul>
+
+        <h5 class="mt-3">3️⃣ Sprawdzanie statusu</h5>
+        <ul>
+          <li>Wejdź w „Dashboard”.</li>
+          <li>Sprawdzisz tam:
+            <ul>
+              <li>oczekujące aplikacje,</li>
+              <li>zaakceptowane realizacje,</li>
+              <li>ewentualne zaproszenia.</li>
+            </ul>
+          </li>
+        </ul>
+
+        <h5 class="mt-3">4️⃣ Zaproszenia</h5>
+        <ul>
+          <li>Jeśli zostaniesz zaproszony ręcznie, możesz zaakceptować lub odrzucić zaproszenie.</li>
+          <li>Po akceptacji stanowisko pojawi się jako przypisane.</li>
+        </ul>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= FAQ ================= -->
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingFAQ">
+      <button class="accordion-button collapsed"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapseFAQ">
+        ❓ Najczęstsze pytania
+      </button>
+    </h2>
+    <div id="collapseFAQ"
+         class="accordion-collapse collapse"
+         data-bs-parent="#instrukcjaAccordion">
+      <div class="accordion-body">
+
+        <p><strong>Czy mogę aplikować na własną realizację?</strong><br>
+        Nie.</p>
+
+        <p><strong>Czy mogę zmienić przypisaną osobę?</strong><br>
+        Tak, w szczegółach realizacji kliknij „Zmień przypisanie”.</p>
+
+        <p><strong>Czy mogę dodać osobę spoza systemu?</strong><br>
+        Tak, możesz podać jej imię, nazwisko i numer telefonu.</p>
+
+        <p><strong>Gdzie widzę swoje zgłoszenia?</strong><br>
+        W dashboardzie.</p>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

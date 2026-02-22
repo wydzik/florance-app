@@ -47,6 +47,8 @@ urlpatterns = [
     path("reset/done/", auth_views.PasswordResetCompleteView.as_view(template_name="auth/password_reset_complete.html"), name="password_reset_complete"),
     path("polityka-prywatnosci/", views.privacy_policy, name="privacy_policy"),
     path("usun-konto/", views.delete_account, name="delete_account"),
+    path("jak-to-dziala/", views.jak_to_dziala, name="jak_to_dziala"),
+
 
 
 ]

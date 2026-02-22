@@ -950,3 +950,8 @@ def delete_account(request):
 
     return render(request, "delete_account.html")
 
+
+def jak_to_dziala(request):
+    return render(request, "jak_to_dziala.html")
+
+
