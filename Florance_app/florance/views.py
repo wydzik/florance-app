@@ -213,19 +213,36 @@ def realizacja_detail(request, pk):
         ),
         pk=pk
     )
-    florysta = get_object_or_404(Florysta, user=request.user)
-    is_owner = realizacja.pracownia.owner == florysta
 
+    florysta = None
+    is_owner = False
+    is_assigned = False
+
+    # 🔐 TYLKO jeśli user zalogowany
+    if request.user.is_authenticated:
+        florysta = Florysta.objects.filter(user=request.user).first()
+
+        if florysta:
+            is_owner = realizacja.pracownia.owner == florysta
+
+            is_assigned = Pracownicy.objects.filter(
+                realizacja=realizacja,
+                przypisany_florysta=florysta,
+                status_przypisania="zaakceptowane"
+            ).exists()
+
+    # 📌 Stanowiska
     stanowiska = []
     for s in realizacja.pracownicy_set.all():
-        s.already_applied = s.kandydaci.filter(florysta=florysta).exists()
-        stanowiska.append(s)
 
-    is_assigned = Pracownicy.objects.filter(
-        realizacja=realizacja,
-        przypisany_florysta=request.user.florysta,
-        status_przypisania="zaakceptowane"
-    ).exists()
+        if florysta:
+            s.already_applied = s.kandydaci.filter(
+                florysta=florysta
+            ).exists()
+        else:
+            s.already_applied = False
+
+        stanowiska.append(s)
 
     can_view_files = is_owner or is_assigned
 
@@ -239,7 +256,6 @@ def realizacja_detail(request, pk):
             "can_view_files": can_view_files,
         }
     )
-
 
 @login_required
 def create_pracownicy(request, realizacja_id):
