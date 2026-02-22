@@ -42,11 +42,13 @@
 
     <div class="col-md-6 mb-3">
       <label class="form-label">Powtórz hasło</label>
-      {{ form.password2 }}
+      <div class="input-group">
+        {{ form.password2 }}
       <button class="btn btn-outline-secondary" type="button" id="togglePassword2">
       👁
-    </button>
-      {{ form.password2.errors }}
+      </button>
+</div>
+
     </div>
   </div>
 
@@ -125,7 +127,11 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+
   const passwordInput = document.getElementById("id_password");
+  const passwordInput2 = document.getElementById("id_password2");
+  const toggleBtn = document.getElementById("togglePassword");
+  const toggleBtn2 = document.getElementById("togglePassword2");
   const help = document.getElementById("passwordHelp");
 
   const rules = [
@@ -147,21 +153,24 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   passwordInput.addEventListener("input", updateHelp);
+
+  toggleBtn.addEventListener("click", function () {
+    passwordInput.type =
+      passwordInput.type === "password" ? "text" : "password";
+    toggleBtn.textContent =
+      passwordInput.type === "password" ? "👁" : "🙈";
+  });
+
+  toggleBtn2.addEventListener("click", function () {
+    passwordInput2.type =
+      passwordInput2.type === "password" ? "text" : "password";
+    toggleBtn2.textContent =
+      passwordInput2.type === "password" ? "👁" : "🙈";
+  });
+
 });
-
-const toggleBtn = document.getElementById("togglePassword");
-
-toggleBtn.addEventListener("click", function () {
-  if (passwordInput.type === "password") {
-    passwordInput.type = "text";
-    toggleBtn.textContent = "🙈";
-  } else {
-    passwordInput.type = "password";
-    toggleBtn.textContent = "👁";
-  }
-});
-
 </script>
+
 
 
 {% endblock %}
