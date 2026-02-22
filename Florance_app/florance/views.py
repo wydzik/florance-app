@@ -93,15 +93,18 @@ def create_pracownia(request):
     return render(request, "create_pracownia.html", {"form": form})
 
 
-
 def login_view(request):
     next_url = request.GET.get("next") or request.POST.get("next")
+
     if request.method == "POST":
         form = LoginForm(request.POST)
+
         if form.is_valid():
             username = form.cleaned_data["username"]
             password = form.cleaned_data["password"]
+
             user = authenticate(request, username=username, password=password)
+
             if user is not None:
                 login(request, user)
                 return redirect(next_url or "index")
@@ -110,7 +113,15 @@ def login_view(request):
     else:
         form = LoginForm()
 
-    return render(request, "login.html", {"next": next_url})
+    return render(
+        request,
+        "login.html",
+        {
+            "form": form,
+            "next": next_url
+        }
+    )
+
 
 def logout_view(request):
     logout(request)
