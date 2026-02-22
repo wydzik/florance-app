@@ -172,20 +172,39 @@
 
   {% else %}
 
-    {% if s.is_filled %}
-      <span class="badge bg-success">Stanowisko obsadzone</span>
+ {% if not request.user.is_authenticated %}
 
-    {% elif s.already_applied %}
-      <span class="badge bg-warning text-dark">
-        Już aplikowałeś
-      </span>
+  {% if not s.is_filled %}
+    <a href="{% url 'login' %}?next={{ request.path }}"
+       class="btn btn-sm btn-success">
+      Zaloguj się, aby aplikować
+    </a>
+  {% else %}
+    <span class="badge bg-success">
+      Stanowisko obsadzone
+    </span>
+  {% endif %}
 
-    {% else %}
-      <a href="{% url 'apply_stanowisko' s.id %}"
-         class="btn btn-sm btn-success">
-        Aplikuj
-      </a>
-    {% endif %}
+{% else %}
+
+  {% if s.is_filled %}
+    <span class="badge bg-success">
+      Stanowisko obsadzone
+    </span>
+
+  {% elif s.already_applied %}
+    <span class="badge bg-warning text-dark">
+      Już aplikowałeś
+    </span>
+
+  {% else %}
+    <a href="{% url 'apply_stanowisko' s.id %}"
+       class="btn btn-sm btn-success">
+      Aplikuj
+    </a>
+  {% endif %}
+
+{% endif %}
 
   {% endif %}
 

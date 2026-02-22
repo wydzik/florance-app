@@ -95,6 +95,7 @@ def create_pracownia(request):
 
 
 def login_view(request):
+    next_url = request.GET.get("next") or request.POST.get("next")
     if request.method == "POST":
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -103,13 +104,13 @@ def login_view(request):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect("index")  # 👈 po zalogowaniu wraca na stronę główną
+                return redirect(next_url or "index")
             else:
                 form.add_error(None, "Nieprawidłowa nazwa użytkownika lub hasło")
     else:
         form = LoginForm()
-    return render(request, "login.html", {"form": form})
 
+    return render(request, "login.html", {"next": next_url})
 
 def logout_view(request):
     logout(request)
@@ -204,7 +205,6 @@ def edit_pracownia(request, pk):
     })
 
 
-@login_required
 def realizacja_detail(request, pk):
     realizacja = get_object_or_404(
         Realizacja.objects.select_related(

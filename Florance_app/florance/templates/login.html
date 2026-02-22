@@ -5,6 +5,7 @@
   <form method="post" class="card p-3 shadow-sm">
     {% csrf_token %}
     {{ form.as_p }}
+    <input type="hidden" name="next" value="{{ next }}">
     <button type="submit" class="btn btn-primary">Zaloguj się</button>
     <a href="{% url 'password_reset' %}">Nie pamiętasz hasła?</a>
 
