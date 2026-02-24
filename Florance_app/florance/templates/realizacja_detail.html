@@ -62,46 +62,7 @@
     ➕ Dodaj plik
   </a>
 {% endif %}
-{% endif %}
-<hr>
-<h5>📎 Pliki do realizacji</h5>
 
-{% if realizacja.pliki.all %}
-  <ul class="list-group mb-3">
-    {% for plik in realizacja.pliki.all %}
-      <li class="list-group-item d-flex justify-content-between align-items-center">
-        <div>
-          <a href="{{ plik.plik.url }}" target="_blank">
-            {{ plik.nazwa|default:plik.plik.name }}
-          </a>
-          <br>
-          <small class="text-muted">
-            dodano: {{ plik.dodano|date:"d.m.Y H:i" }}
-          </small>
-        </div>
-
-        {% if is_owner %}
-          <form method="post"
-                action="{% url 'delete_realizacja_plik' plik.id %}">
-            {% csrf_token %}
-            <button class="btn btn-sm btn-outline-danger">
-              Usuń
-            </button>
-          </form>
-        {% endif %}
-      </li>
-    {% endfor %}
-  </ul>
-{% else %}
-  <p class="text-muted">Brak plików.</p>
-{% endif %}
-
-{% if is_owner %}
-  <a href="{% url 'add_realizacja_plik' realizacja.id %}"
-     class="btn btn-sm btn-outline-primary">
-    ➕ Dodaj plik
-  </a>
-{% endif %}
 
 {% if is_owner %}
 <hr>
