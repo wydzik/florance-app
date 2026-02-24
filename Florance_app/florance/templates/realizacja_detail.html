@@ -26,7 +26,43 @@
 {% endif %}
 </p>
 
-{% if can_view_files %}
+{% if pliki %}
+<hr>
+<h5>📎 Pliki do realizacji</h5>
+
+<ul class="list-group mb-3">
+  {% for plik in pliki %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <div>
+        <a href="{{ plik.plik.url }}" target="_blank">
+          {{ plik.nazwa|default:plik.plik.name }}
+        </a>
+
+        {% if is_owner and plik.widocznosc == "owner" %}
+          <span class="badge bg-secondary ms-2">Prywatny</span>
+        {% endif %}
+      </div>
+
+      {% if is_owner %}
+        <form method="post"
+              action="{% url 'delete_realizacja_plik' plik.id %}">
+          {% csrf_token %}
+          <button class="btn btn-sm btn-outline-danger">
+            Usuń
+          </button>
+        </form>
+      {% endif %}
+    </li>
+  {% endfor %}
+</ul>
+
+{% if is_owner %}
+  <a href="{% url 'add_realizacja_plik' realizacja.id %}"
+     class="btn btn-sm btn-outline-primary">
+    ➕ Dodaj plik
+  </a>
+{% endif %}
+{% endif %}
 <hr>
 <h5>📎 Pliki do realizacji</h5>
 
@@ -170,6 +206,121 @@
       Usuń
     </button>
 
+    <tr>
+  <td colspan="9">
+
+    <div class="mt-2 p-3 bg-light rounded">
+
+      <!-- Toggle -->
+      <button class="btn btn-sm btn-outline-secondary"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#comments-{{ s.id }}">
+        💬 Komentarze ({{ s.visible_comments|length }})
+      </button>
+
+      <div class="collapse mt-3" id="comments-{{ s.id }}">
+
+        <!-- LISTA KOMENTARZY -->
+        {% for komentarz in s.visible_comments %}
+          <div class="border rounded p-2 mb-2 bg-white">
+
+            <!-- Badge widoczności -->
+            <div class="mb-1">
+              {% if komentarz.typ == "owner" %}
+                <span class="badge bg-secondary">
+                  Tylko owner
+                </span>
+              {% elif komentarz.typ == "worker" %}
+                <span class="badge bg-warning text-dark">
+                  Prywatny dla pracownika
+                </span>
+              {% else %}
+                <span class="badge bg-info text-dark">
+                  Dla wszystkich pracowników
+                </span>
+              {% endif %}
+            </div>
+
+            <small class="text-muted">
+              {{ komentarz.created_at|date:"d.m.Y H:i" }}
+            </small>
+
+            <p class="mb-0 mt-1">
+              {{ komentarz.tresc|linebreaksbr }}
+            </p>
+
+          </div>
+        {% empty %}
+          <p class="text-muted">Brak komentarzy.</p>
+        {% endfor %}
+
+
+        <!-- FORMULARZ DODAWANIA (TYLKO OWNER) -->
+        {% if is_owner %}
+        <form method="post"
+              action="{% url 'add_komentarz_stanowiska' s.id %}"
+              class="mt-3">
+
+          {% csrf_token %}
+
+          <div class="mb-2">
+            <textarea name="tresc"
+                      class="form-control"
+                      rows="2"
+                      placeholder="Dodaj komentarz..."
+                      required></textarea>
+          </div>
+
+          <div class="mb-2">
+            <label class="form-label">Widoczność</label>
+            <select name="typ"
+                    class="form-select form-select-sm"
+                    onchange="toggleWorkerSelect(this, {{ s.id }})"
+                    required>
+              <option value="owner">Tylko dla mnie (owner)</option>
+              <option value="worker">Tylko dla przypisanego pracownika</option>
+              <option value="all">Dla wszystkich pracowników realizacji</option>
+            </select>
+          </div>
+
+          <!-- Wybór pracownika (pokazuje się tylko przy typ=worker) -->
+          <div class="mb-2 d-none"
+               id="worker-select-{{ s.id }}">
+
+            {% if s.przypisany_florysta %}
+              <label class="form-label">
+                Pracownik:
+              </label>
+              <input type="hidden"
+                     name="widoczny_dla"
+                     value="{{ s.przypisany_florysta.id }}">
+
+              <div class="form-control form-control-sm bg-light">
+                {{ s.przypisany_florysta.imie }}
+                {{ s.przypisany_florysta.nazwisko }}
+              </div>
+            {% else %}
+              <div class="text-muted small">
+                Brak przypisanego pracownika
+              </div>
+            {% endif %}
+
+          </div>
+
+          <button class="btn btn-sm btn-outline-primary">
+            Dodaj komentarz
+          </button>
+
+        </form>
+        {% endif %}
+
+      </div>
+    </div>
+
+  </td>
+</tr>
+
   {% else %}
 
  {% if not request.user.is_authenticated %}
@@ -257,5 +408,19 @@
 {% endfor %}
 {% endif %}
 
+<script>
+function toggleWorkerSelect(select, stanowiskoId) {
+  const workerDiv = document.getElementById(
+    "worker-select-" + stanowiskoId
+  );
+
+  if (select.value === "worker") {
+    workerDiv.classList.remove("d-none");
+  } else {
+    workerDiv.classList.add("d-none");
+  }
+}
+</script>
 
 {% endblock %}
+

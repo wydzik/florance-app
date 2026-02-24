@@ -222,14 +222,27 @@ class Kandydat(models.Model):
 # models.py
 
 class RealizacjaPlik(models.Model):
+
+    WIDOCZNOSC_CHOICES = [
+        ("owner", "Tylko owner"),
+        ("workers", "Widoczny dla przypisanych pracowników"),
+    ]
+
     realizacja = models.ForeignKey(
         Realizacja,
-        on_delete=models.CASCADE,
-        related_name="pliki"
+        related_name="pliki",
+        on_delete=models.CASCADE
     )
+
     plik = models.FileField(upload_to="realizacje/")
     nazwa = models.CharField(max_length=255, blank=True)
     dodano = models.DateTimeField(auto_now_add=True)
+
+    widocznosc = models.CharField(
+        max_length=20,
+        choices=WIDOCZNOSC_CHOICES,
+        default="workers"
+    )
 
     def extension(self):
         return os.path.splitext(self.plik.name)[1].lower()
@@ -242,16 +255,41 @@ class RealizacjaPlik(models.Model):
 
 
 class KomentarzStanowiska(models.Model):
+
+    TYP_CHOICES = [
+        ("owner", "Prywatny dla ownera"),
+        ("worker", "Tylko dla konkretnego pracownika"),
+        ("all", "Dla wszystkich pracowników realizacji"),
+    ]
+
     stanowisko = models.ForeignKey(
         Pracownicy,
         on_delete=models.CASCADE,
         related_name="komentarze"
     )
+
     autor = models.ForeignKey(
         Florysta,
         on_delete=models.CASCADE
     )
+
     tresc = models.TextField()
+
+    typ = models.CharField(
+        max_length=10,
+        choices=TYP_CHOICES,
+        default="owner"
+    )
+
+    # używane tylko gdy typ="worker"
+    widoczny_dla = models.ForeignKey(
+        Florysta,
+        null=True,
+        blank=True,
+        related_name="komentarze_prywatne",
+        on_delete=models.CASCADE
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

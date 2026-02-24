@@ -6,7 +6,7 @@ from .forms import FlorystaForm, PracowniaForm, LoginForm, FlorystaRegistrationF
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from .models import Florysta, Pracownia, Realizacja, Pracownicy, Kandydat, StatusKandydata, StatusPrzypisania, \
-                    RealizacjaPlik, Powiadomienie
+                    RealizacjaPlik, Powiadomienie, KomentarzStanowiska
 from django.shortcuts import get_object_or_404
 from django.db.models import Exists, OuterRef
 from django.contrib import messages
@@ -18,6 +18,7 @@ from django.utils.formats import date_format
 from collections import defaultdict
 from .utils.notifications import notify_user
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.db.models import Q
 
 
 
@@ -254,10 +255,35 @@ def realizacja_detail(request, pk):
         else:
             s.already_applied = False
 
+        # 🔽 LOGIKA KOMENTARZY
+        if is_owner:
+            # owner widzi wszystko
+            s.visible_comments = s.komentarze.all()
+
+        elif is_assigned and florysta:
+            # pracownik widzi:
+            # - komentarze dla wszystkich
+            # - komentarze tylko dla niego
+            s.visible_comments = s.komentarze.filter(
+                Q(typ="all") |
+                Q(typ="worker", widoczny_dla=florysta)
+            )
+
+        else:
+            s.visible_comments = s.komentarze.none()
+
         stanowiska.append(s)
+    visible_pliki = []
 
-    can_view_files = is_owner or is_assigned
+    if is_owner:
+        # owner widzi wszystko
+        visible_pliki = realizacja.pliki.all()
 
+    elif is_assigned:
+        # pracownik widzi tylko pliki dla pracowników
+        visible_pliki = realizacja.pliki.filter(
+            widocznosc="workers"
+        )
     return render(
         request,
         "realizacja_detail.html",
@@ -265,7 +291,7 @@ def realizacja_detail(request, pk):
             "realizacja": realizacja,
             "is_owner": is_owner,
             "stanowiska": stanowiska,
-            "can_view_files": can_view_files,
+            "pliki": visible_pliki,
         }
     )
 
@@ -934,23 +960,38 @@ def edit_realizacja_notatki(request, realizacja_id):
         return redirect("realizacja_detail", realizacja.id)
 
 
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+
 @login_required
 def add_komentarz_stanowiska(request, stanowisko_id):
-    stanowisko = get_object_or_404(
-        Pracownicy,
-        id=stanowisko_id,
-        realizacja__pracownia__owner__user=request.user
-    )
+
+    stanowisko = get_object_or_404(Pracownicy, pk=stanowisko_id)
+
+    florysta = request.user.florysta
+
+    # tylko owner realizacji może dodawać
+    if stanowisko.realizacja.pracownia.owner != florysta:
+        return redirect("realizacja_detail", pk=stanowisko.realizacja.id)
 
     if request.method == "POST":
-        form = KomentarzStanowiskaForm(request.POST)
-        if form.is_valid():
-            komentarz = form.save(commit=False)
-            komentarz.stanowisko = stanowisko
-            komentarz.autor = request.user.florysta
+
+        tresc = request.POST.get("tresc")
+        typ = request.POST.get("typ")
+        widoczny_dla_id = request.POST.get("widoczny_dla")
+
+        komentarz = KomentarzStanowiska.objects.create(
+            stanowisko=stanowisko,
+            autor=florysta,
+            tresc=tresc,
+            typ=typ
+        )
+
+        if typ == "worker" and widoczny_dla_id:
+            komentarz.widoczny_dla_id = widoczny_dla_id
             komentarz.save()
 
-    return redirect("realizacja_detail", stanowisko.realizacja.id)
+    return redirect("realizacja_detail", pk=stanowisko.realizacja.id)
 
 
 @login_required
