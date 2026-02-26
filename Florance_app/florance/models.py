@@ -223,11 +223,6 @@ class Kandydat(models.Model):
 
 class RealizacjaPlik(models.Model):
 
-    WIDOCZNOSC_CHOICES = [
-        ("owner", "Tylko owner"),
-        ("workers", "Widoczny dla przypisanych pracowników"),
-    ]
-
     realizacja = models.ForeignKey(
         Realizacja,
         related_name="pliki",
@@ -238,10 +233,11 @@ class RealizacjaPlik(models.Model):
     nazwa = models.CharField(max_length=255, blank=True)
     dodano = models.DateTimeField(auto_now_add=True)
 
-    widocznosc = models.CharField(
-        max_length=20,
-        choices=WIDOCZNOSC_CHOICES,
-        default="workers"
+    # 👇 puste = prywatny
+    widoczny_dla = models.ManyToManyField(
+        Florysta,
+        blank=True,
+        related_name="udostepnione_pliki"
     )
 
     def extension(self):

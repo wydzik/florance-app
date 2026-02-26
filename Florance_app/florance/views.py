@@ -276,14 +276,14 @@ def realizacja_detail(request, pk):
     visible_pliki = []
 
     if is_owner:
-        # owner widzi wszystko
         visible_pliki = realizacja.pliki.all()
 
     elif is_assigned:
-        # pracownik widzi tylko pliki dla pracowników
         visible_pliki = realizacja.pliki.filter(
-            widocznosc="workers"
+            widoczny_dla=florysta
         )
+    else:
+        visible_pliki = []
     return render(
         request,
         "realizacja_detail.html",
@@ -1023,4 +1023,33 @@ def delete_account(request):
 def jak_to_dziala(request):
     return render(request, "jak_to_dziala.html")
 
+@login_required
+def update_plik_visibility(request, plik_id):
 
+    plik = get_object_or_404(RealizacjaPlik, pk=plik_id)
+    realizacja = plik.realizacja
+
+    florysta = request.user.florysta
+
+    if realizacja.pracownia.owner != florysta:
+        return redirect("realizacja_detail", pk=realizacja.id)
+
+    if request.method == "POST":
+
+        plik.widoczny_dla.clear()
+
+        # jeśli zaznaczono wszystkich
+        if request.POST.get("all_workers"):
+
+            assigned_workers = Florysta.objects.filter(
+                pracownicy__realizacja=realizacja,
+                pracownicy__status_przypisania="zaakceptowane"
+            ).distinct()
+
+            plik.widoczny_dla.set(assigned_workers)
+
+        else:
+            worker_ids = request.POST.getlist("workers")
+            plik.widoczny_dla.set(worker_ids)
+
+    return redirect("realizacja_detail", pk=realizacja.id)
