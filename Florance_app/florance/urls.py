@@ -48,7 +48,7 @@ urlpatterns = [
     path("polityka-prywatnosci/", views.privacy_policy, name="privacy_policy"),
     path("usun-konto/", views.delete_account, name="delete_account"),
     path("jak-to-dziala/", views.jak_to_dziala, name="jak_to_dziala"),
-    path("update-plik-visibility/", views.update_plik_visibility, name="update_plik_visibility")
+    path("realizacja/<int:plik_id>/update-plik-visibility/", views.update_plik_visibility, name="update_plik_visibility")
 
 
 
