@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import environ
+import os
 
 # Initialise environment variables
 env = environ.Env()
@@ -39,8 +40,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 EMAIL_HOST_USER = "apikey"
-EMAIL_HOST_PASSWORD = env("SENDGRID_API_KEY")
-
+EMAIL_HOST_PASSWORD = env("SENDGRID_API_KEY", default="")
 DEFAULT_FROM_EMAIL = "florance.polska@gmail.com"
 
 # Application definition
@@ -159,24 +159,33 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # MEDIA_URL = "/media/"
 # MEDIA_ROOT = BASE_DIR / "media"
 
-DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 
-AWS_ACCESS_KEY_ID = env("R2_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = env("R2_SECRET_ACCESS_KEY")
+if "R2_ACCESS_KEY_ID" in os.environ:
 
-AWS_STORAGE_BUCKET_NAME = env("R2_BUCKET_NAME")
-AWS_S3_ENDPOINT_URL = env("R2_ENDPOINT_URL")
+    AWS_ACCESS_KEY_ID = env("R2_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = env("R2_SECRET_ACCESS_KEY")
+    AWS_STORAGE_BUCKET_NAME = env("R2_BUCKET_NAME")
+    AWS_S3_ENDPOINT_URL = env("R2_ENDPOINT_URL")
+    AWS_S3_CUSTOM_DOMAIN = env("R2_PUBLIC_URL")
+    AWS_S3_REGION_NAME = "auto"
+    AWS_S3_SIGNATURE_VERSION = "s3v4"
 
-AWS_S3_REGION_NAME = "auto"
-AWS_S3_SIGNATURE_VERSION = "s3v4"
+    AWS_DEFAULT_ACL = None
+    AWS_QUERYSTRING_AUTH = False
 
-AWS_DEFAULT_ACL = None
-AWS_QUERYSTRING_AUTH = False
+    AWS_S3_ADDRESSING_STYLE = "virtual"
 
-AWS_S3_CUSTOM_DOMAIN = env("R2_PUBLIC_URL")
+    MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
 
-MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
-AWS_S3_ADDRESSING_STYLE = "virtual"
+    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+
+else:
+    # Lokalnie zwykły filesystem
+    MEDIA_ROOT = BASE_DIR / "media"
+    MEDIA_URL = "/media/"
+
+
+
 
 
 
