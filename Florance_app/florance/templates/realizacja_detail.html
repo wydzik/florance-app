@@ -41,15 +41,6 @@
         {{ plik.nazwa|default:plik.plik.name }}
       </a>
 
-<!--      {% if not plik.widoczny_dla.all %}-->
-<!--        <span class="badge bg-secondary ms-2">Prywatny</span>-->
-<!--      {% else %}-->
-<!--        <span class="badge bg-info ms-2">-->
-<!--&lt;!&ndash;          Widoczny dla {{ plik.widoczny_dla.count }} osób&ndash;&gt;-->
-<!--        </span>-->
-<!--      {% endif %}-->
-<!--    </div>-->
-
     {% if is_owner %}
     <div class="text-end">
 
