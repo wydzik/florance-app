@@ -122,13 +122,13 @@
     </li>
   {% endfor %}
 </ul>
+{% endif %}
 
 {% if is_owner %}
   <a href="{% url 'add_realizacja_plik' realizacja.id %}"
      class="btn btn-sm btn-outline-primary">
     ➕ Dodaj plik
   </a>
-{% endif %}
 {% endif %}
 
 {% if is_owner %}
