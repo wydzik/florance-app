@@ -544,6 +544,9 @@ def assign_pracownik(request, realizacja_id, pk):
         if form.is_valid():
             with transaction.atomic():
 
+                # zapamiętany wcześniej
+                # old_florysta = stanowisko.przypisany_florysta
+
                 # 🔄 wyczyść stare przypisanie
                 stanowisko.przypisany_florysta = None
                 stanowisko.przypisane_imie = None
@@ -554,20 +557,12 @@ def assign_pracownik(request, realizacja_id, pk):
                 kandydat = form.cleaned_data.get("kandydat")
                 florysta = form.cleaned_data.get("florysta")
 
+                # 🔧 ustaw nowe przypisanie
                 if kandydat:
                     stanowisko.przypisany_florysta = kandydat.florysta
                     stanowisko.status_przypisania = StatusPrzypisania.OCZEKUJE
                     kandydat.status = "wybrany"
                     kandydat.save()
-                    # 🔥 usuń dostęp starego pracownika do plików
-                    new_florysta = stanowisko.przypisany_florysta
-
-                    if old_florysta and old_florysta != new_florysta:
-                        for p in RealizacjaPlik.objects.filter(
-                                realizacja=realizacja,
-                                widoczny_dla=old_florysta
-                        ):
-                            p.widoczny_dla.remove(old_florysta)
 
                     notify(
                         kandydat.florysta.user,
@@ -575,15 +570,15 @@ def assign_pracownik(request, realizacja_id, pk):
                         link=reverse("dashboard")
                     )
 
-
                 elif florysta:
                     stanowisko.przypisany_florysta = florysta
                     stanowisko.status_przypisania = StatusPrzypisania.OCZEKUJE
 
-                    notify(florysta.user,
-                           f"Zostałeś zaproszony do realizacji: {stanowisko.realizacja.nazwa_eventu}",
-                           link=reverse("dashboard")
-                           )
+                    notify(
+                        florysta.user,
+                        f"Zostałeś zaproszony do realizacji: {stanowisko.realizacja.nazwa_eventu}",
+                        link=reverse("dashboard")
+                    )
 
                     notify_user(
                         user=florysta.user,
@@ -591,17 +586,24 @@ def assign_pracownik(request, realizacja_id, pk):
                         link=reverse("dashboard"),
                     )
 
-
-
                 else:
                     stanowisko.przypisane_imie = form.cleaned_data["imie"]
                     stanowisko.przypisane_nazwisko = form.cleaned_data["nazwisko"]
                     stanowisko.przypisany_telefon = form.cleaned_data.get("telefon")
-
-                    # osoba spoza systemu = od razu zaakceptowana
                     stanowisko.status_przypisania = StatusPrzypisania.ZAAKCEPTOWANE
 
+                # 💾 zapisz nowe przypisanie
                 stanowisko.save()
+
+                # 🔥 KLUCZOWE — usuń dostęp starego pracownika ZAWSZE
+                new_florysta = stanowisko.przypisany_florysta
+
+                if old_florysta and old_florysta != new_florysta:
+                    for p in RealizacjaPlik.objects.filter(
+                            realizacja=realizacja,
+                            widoczny_dla=old_florysta
+                    ):
+                        p.widoczny_dla.remove(old_florysta)
 
             return redirect("realizacja_detail", realizacja.id)
 
