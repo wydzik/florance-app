@@ -350,10 +350,26 @@ def delete_pracownicy(request, realizacja_id, pk):
         pracownia__owner__user=request.user
     )
     stanowisko = get_object_or_404(Pracownicy, id=pk, realizacja=realizacja)
+    old_florysta = stanowisko.przypisany_florysta
 
     if request.method == "POST":
+
+        # 🔥 usuń dostęp do plików
+        if old_florysta:
+            still_assigned = Pracownicy.objects.filter(
+                realizacja=realizacja,
+                przypisany_florysta=old_florysta
+            ).exclude(id=stanowisko.id).exists()
+
+            # tylko jeśli to było ostatnie stanowisko tej osoby
+            if not still_assigned:
+                for p in RealizacjaPlik.objects.filter(
+                        realizacja=realizacja,
+                        widoczny_dla=old_florysta
+                ):
+                    p.widoczny_dla.remove(old_florysta)
+
         stanowisko.delete()
-        return redirect("realizacja_detail", realizacja_id=realizacja.id)
 
     return render(request, "delete_pracownicy.html", {
         "realizacja": realizacja,
