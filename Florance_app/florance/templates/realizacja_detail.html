@@ -43,7 +43,7 @@
 
           <!-- INFO O DOSTĘPIE -->
           <div class="small text-muted mt-1">
-            {% if plik.widoczny_dla.all %}
+            {% if plik.widoczny_dla.exists %}
               Dostęp:
               {% for f in plik.widoczny_dla.all %}
                 {{ f.imie }} {{ f.nazwisko }}{% if not forloop.last %}, {% endif %}

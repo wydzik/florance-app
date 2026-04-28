@@ -531,6 +531,7 @@ def assign_pracownik(request, realizacja_id, pk):
         pracownia__owner__user=request.user
     )
     stanowisko = get_object_or_404(Pracownicy, id=pk, realizacja=realizacja)
+    old_florysta = stanowisko.przypisany_florysta
 
     owner = realizacja.pracownia.owner
 
@@ -558,6 +559,15 @@ def assign_pracownik(request, realizacja_id, pk):
                     stanowisko.status_przypisania = StatusPrzypisania.OCZEKUJE
                     kandydat.status = "wybrany"
                     kandydat.save()
+                    # 🔥 usuń dostęp starego pracownika do plików
+                    new_florysta = stanowisko.przypisany_florysta
+
+                    if old_florysta and old_florysta != new_florysta:
+                        for p in RealizacjaPlik.objects.filter(
+                                realizacja=realizacja,
+                                widoczny_dla=old_florysta
+                        ):
+                            p.widoczny_dla.remove(old_florysta)
 
                     notify(
                         kandydat.florysta.user,
