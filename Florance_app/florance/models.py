@@ -234,10 +234,11 @@ class RealizacjaPlik(models.Model):
     dodano = models.DateTimeField(auto_now_add=True)
 
     # 👇 puste = prywatny
-    widoczny_dla = models.ManyToManyField(
-        Florysta,
+    # JEST
+    widoczne_dla_stanowisk = models.ManyToManyField(
+        Pracownicy,
         blank=True,
-        related_name="udostepnione_pliki"
+        related_name="dostepne_pliki"
     )
 
     def extension(self):

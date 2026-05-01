@@ -279,9 +279,11 @@ def realizacja_detail(request, pk):
         visible_pliki = realizacja.pliki.all()
 
     elif is_assigned:
+        # JEST
         visible_pliki = realizacja.pliki.filter(
-            widoczny_dla=florysta
-        )
+            widoczne_dla_stanowisk__przypisany_florysta=florysta,
+            widoczne_dla_stanowisk__status_przypisania="zaakceptowane"
+        ).distinct()
     else:
         visible_pliki = []
     return render(
@@ -1064,20 +1066,17 @@ def update_plik_visibility(request, plik_id):
 
     if request.method == "POST":
 
-        plik.widoczny_dla.clear()
+        # JEST
+        plik.widoczne_dla_stanowisk.clear()
 
-        # jeśli zaznaczono wszystkich
-        if request.POST.get("all_workers"):
-
-            assigned_workers = Florysta.objects.filter(
-                pracownicy__realizacja=realizacja,
-                pracownicy__status_przypisania="zaakceptowane"
-            ).distinct()
-
-            plik.widoczny_dla.set(assigned_workers)
-
+        if "all_workers" in request.POST:
+            stanowiska = Pracownicy.objects.filter(
+                realizacja=realizacja,
+                status_przypisania="zaakceptowane"
+            )
+            plik.widoczne_dla_stanowisk.set(stanowiska)
         else:
-            worker_ids = request.POST.getlist("workers")
-            plik.widoczny_dla.set(worker_ids)
+            stanowiska_ids = request.POST.getlist("workers")
+            plik.widoczne_dla_stanowisk.set(stanowiska_ids)
 
     return redirect("realizacja_detail", pk=realizacja.id)
