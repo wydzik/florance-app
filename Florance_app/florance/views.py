@@ -730,6 +730,7 @@ def dashboard(request):
         events.append({
             "type": "owner",
             "date": r.data_rozpoczecia,
+            "end_date": r.data_zakonczenia,
             "realizacja": r,
             "realizacja_url": reverse("realizacja_detail", args=[r.id]),
             "opis": r.opis,
@@ -747,6 +748,7 @@ def dashboard(request):
         events.append({
             "type": "invite",
             "date": r.data_rozpoczecia,
+            "end_date": r.data_zakonczenia,
             "realizacja": r,
             "realizacja_url": reverse("realizacja_detail", args=[r.id]),
             "opis": s.szczegoly,
