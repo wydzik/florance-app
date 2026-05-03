@@ -43,14 +43,14 @@
 
           <!-- INFO O DOSTĘPIE -->
           <div class="small text-muted mt-1">
-            {% if plik.widoczny_dla.exists %}
-              Dostęp:
-              {% for f in plik.widoczny_dla.all %}
-                {{ f.imie }} {{ f.nazwisko }}{% if not forloop.last %}, {% endif %}
-              {% endfor %}
-            {% else %}
-              <span class="text-danger">Prywatny (tylko owner)</span>
-            {% endif %}
+            {% if plik.widoczne_dla_stanowisk.exists %}
+  Dostęp:
+  {% for s in plik.widoczne_dla_stanowisk.all %}
+    {{ s.assigned_person_name }}{% if not forloop.last %}, {% endif %}
+  {% endfor %}
+{% else %}
+  <span class="text-danger">Prywatny (tylko owner)</span>
+{% endif %}
           </div>
         </div>
 
@@ -98,9 +98,9 @@
                          name="workers"
                          value="{{ s.id }}"
                          id="worker_{{ plik.id }}_{{ s.id }}"
-                         {% if s.przypisany_florysta in plik.widoczny_dla.all %}
-                           checked
-                         {% endif %}>
+                         {% if s in plik.widoczne_dla_stanowisk.all %}
+  checked
+{% endif %}>
                   <label class="form-check-label"
                          for="worker_{{ plik.id }}_{{ s.id }}">
                     {{ s.przypisany_florysta.imie }}
