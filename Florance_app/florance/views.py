@@ -761,6 +761,7 @@ def dashboard(request):
         events.append({
             "type": "application",
             "date": r.data_rozpoczecia,
+            "end_date": r.data_zakonczenia,
             "realizacja": r,
             "realizacja_url": reverse("realizacja_detail", args=[r.id]),
             "opis": k.stanowisko.szczegoly,
@@ -777,10 +778,11 @@ def dashboard(request):
 
     for e in events:
         date = e["date"]
+        end_date=e["end_date"]
         if timezone.is_aware(date):
             date = timezone.localtime(date)
 
-        if date >= now:
+        if end_date >= now:
             upcoming.append(e)
         else:
             archive.append(e)
