@@ -27,10 +27,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['florance-app.onrender.com',
+                 'www.florance-app.onerender.com']
 
 # settings.py
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
@@ -66,6 +67,13 @@ LOGIN_URL = 'login'
 # Gdzie kierować usera po udanym logowaniu (jeśli w formularzu nie ma ?next=)
 LOGIN_REDIRECT_URL = 'index'
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://florance-app.onrender.com",
+    "https://www.florance-app.onrender.com",
+]
+
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
